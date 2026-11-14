@@ -12,8 +12,9 @@ function writeGames(games) {
 
 function readGames() {
   if (!fs.existsSync(storagePath)) {
-    writeGames(initialGames);
-    return initialGames;
+    const emptyGames = [];
+    writeGames(emptyGames);
+    return emptyGames;
   }
 
   const games = JSON.parse(fs.readFileSync(storagePath, 'utf8'));
