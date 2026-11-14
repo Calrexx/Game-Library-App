@@ -1,4 +1,4 @@
-echo "node_modules/" >> .gitignore
-echo "dist/" >> .gitignore
-echo ".env" >> .gitignore
-echo "data/*.json" >> .gitignore
+node_modules/
+.env
+data/*.json
+
