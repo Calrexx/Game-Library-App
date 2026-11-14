@@ -2,37 +2,43 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const storagePath = path.join(__dirname, 'gamelibrary.json');
+const BLOB_KEY = 'games';
 
+let games = null;      // in-memory copy
+let store = null;      // Blobs store, only set on Netlify
+let pending = Promise.resolve();
 
-function writeGames(games) {
-  const temporaryPath = `${storagePath}.tmp`;
-  fs.writeFileSync(temporaryPath, `${JSON.stringify(games, null, 2)}\n`, 'utf8');
-  fs.renameSync(temporaryPath, storagePath);
+function writeFile(next) {
+  const tmp = `${storagePath}.tmp`;
+  fs.writeFileSync(tmp, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
+  fs.renameSync(tmp, storagePath);
 }
 
-function readGames() {
-  if (!fs.existsSync(storagePath)) {
-    const emptyGames = [];
-    writeGames(emptyGames);
-    return emptyGames;
-  }
-
-  const games = JSON.parse(fs.readFileSync(storagePath, 'utf8'));
-  if (!Array.isArray(games)) {
-    throw new TypeError('Game library data must be an array.');
-  }
-  return games;
+function readFile() {
+  if (!fs.existsSync(storagePath)) { writeFile([]); return []; }
+  const data = JSON.parse(fs.readFileSync(storagePath, 'utf8'));
+  if (!Array.isArray(data)) throw new TypeError('Game library data must be an array.');
+  return data;
 }
-
-let games = readGames();
 
 module.exports = {
+  // Called once by the Netlify server entry before it handles requests
+  async connectBlobs(blobStore) {
+    store = blobStore;
+    games = (await store.get(BLOB_KEY, { type: 'json' })) ?? [];
+  },
   getGames() {
+    if (games === null) games = readFile();   // local: lazy-load the file
     return games;
   },
-  saveGames(nextGames) {
-    writeGames(nextGames);
-    games = nextGames;
+  saveGames(next) {
+    games = next;
+    if (store) {
+      pending = pending.then(() => store.setJSON(BLOB_KEY, next)); // saves run one at a time, in order
+    } else {
+      writeFile(next);
+    }
     return games;
-  }
+  },
+  flush() { return pending; }
 };
