@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "baslik": "Hades",
+    "kategori": "Roguelike",
+    "tamamlandi": true,
+    "puan": 9,
+    "notlar": "Try a run with the Twin Fists. Focus on dash-strike upgrades.",
+    "yayinTarihi": "2025-03-08T12:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "baslik": "Elden Ring",
+    "kategori": "Action RPG",
+    "tamamlandi": false,
+    "puan": null,
+    "notlar": "Explore the northern coastline before moving the main story forward.",
+    "yayinTarihi": "2025-03-12T12:00:00.000Z"
+  },
+  {
+    "id": 3,
+    "baslik": "Celeste",
+    "kategori": "Platformer",
+    "tamamlandi": false,
+    "puan": null,
+    "notlar": "",
+    "yayinTarihi": "2025-03-15T12:00:00.000Z"
+  },
+  {
+    "id": 4,
+    "baslik": "Stardew Valley",
+    "kategori": "Simulation",
+    "tamamlandi": false,
+    "puan": null,
+    "notlar": "Remember to save some strawberries for the preserves jars.",
+    "yayinTarihi": "2025-03-19T12:00:00.000Z"
+  }
+]
