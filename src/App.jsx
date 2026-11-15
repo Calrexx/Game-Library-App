@@ -10,6 +10,7 @@ import {
   LockKeyhole,
   LogOut,
   Mail,
+  Pencil,
   Plus,
   Search,
   Sparkles,
@@ -229,6 +230,8 @@ function App() {
 
   async function updateGame(id, changes) {
     const fields = {
+      title: 'baslik',
+      category: 'kategori',
       finished: 'tamamlandi',
       rating: 'puan',
       notes: 'notlar'
@@ -245,8 +248,10 @@ function App() {
       const updatedGame = mapGame(result.data);
       setGames((items) => items.map((game) => game.id === id ? updatedGame : game));
       setSelectedGame((game) => game && game.id === id ? updatedGame : game);
+      return true;
     } catch (error) {
       setNotice(error.message);
+      return false;
     }
   }
 
@@ -537,10 +542,54 @@ function GameCard({ game, index, onClick }) {
 function GameDetails({ game, onClose, onUpdate, onDelete }) {
   const [notes, setNotes] = useState(game.notes || '');
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isEditingDetails, setIsEditingDetails] = useState(false);
+  const [title, setTitle] = useState(game.title);
+  const [category, setCategory] = useState(game.category);
+  const [editError, setEditError] = useState('');
+  const [isSavingDetails, setIsSavingDetails] = useState(false);
   useEffect(() => setNotes(game.notes || ''), [game.id, game.notes]);
+  useEffect(() => {
+    setTitle(game.title);
+    setCategory(game.category);
+    setIsEditingDetails(false);
+  }, [game.id, game.title, game.category]);
 
   function saveNotes() {
     onUpdate(game.id, { notes });
+  }
+
+  function cancelDetailsEdit() {
+    setTitle(game.title);
+    setCategory(game.category);
+    setEditError('');
+    setIsEditingDetails(false);
+  }
+
+  async function saveGameDetails(event) {
+    event.preventDefault();
+    const trimmedTitle = title.trim();
+    const trimmedCategory = category.trim();
+    if (!trimmedTitle) {
+      setEditError('Give your game a title first.');
+      return;
+    }
+    if (trimmedTitle.length > 75) {
+      setEditError('Game titles can be up to 75 characters.');
+      return;
+    }
+    if (!trimmedCategory) {
+      setEditError('Give your game a category first.');
+      return;
+    }
+
+    setEditError('');
+    setIsSavingDetails(true);
+    try {
+      const saved = await onUpdate(game.id, { title: trimmedTitle, category: trimmedCategory });
+      if (saved) setIsEditingDetails(false);
+    } finally {
+      setIsSavingDetails(false);
+    }
   }
 
   return (
@@ -553,6 +602,45 @@ function GameDetails({ game, onClose, onUpdate, onDelete }) {
           <p>Added to your library {formatDate(game.added)}</p>
         </div>
         <div className="detail-body">
+          <div className="game-details-toolbar">
+            <span className="detail-label">GAME DETAILS</span>
+            {isEditingDetails ? (
+              <button className="text-button" type="button" onClick={cancelDetailsEdit}>Cancel</button>
+            ) : (
+              <button className="text-button" type="button" onClick={() => setIsEditingDetails(true)}><Pencil size={13} /> Edit</button>
+            )}
+          </div>
+          {isEditingDetails && (
+            <form className="game-details-form" onSubmit={saveGameDetails}>
+              <label className="form-field">
+                <span className="form-label">GAME TITLE</span>
+                <input
+                  className="plain-input"
+                  autoFocus
+                  maxLength={75}
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
+                  aria-label="Game title"
+                />
+              </label>
+              <label className="form-field">
+                <span className="form-label">CATEGORY</span>
+                <input
+                  className="plain-input"
+                  value={category}
+                  onChange={(event) => setCategory(event.target.value)}
+                  aria-label="Game category"
+                />
+              </label>
+              {editError && <div className="form-error game-details-error">{editError}</div>}
+              <div className="game-details-form-actions">
+                <button className="primary-button game-details-save" type="submit" disabled={isSavingDetails}>
+                  {isSavingDetails ? 'Saving...' : 'Save changes'} <Check size={14} />
+                </button>
+              </div>
+            </form>
+          )}
+          <div className="detail-divider" />
           <div className="detail-status-row">
             <div><span className="detail-label">YOUR PROGRESS</span><span className={`detail-progress ${game.finished ? 'done' : ''}`}>{game.finished ? <><CheckCircle2 size={16} /> Finished</> : <><span className="playing-dot" /> In progress</>}</span></div>
             <button

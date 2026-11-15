@@ -132,6 +132,12 @@ h1 span { color: #c1e577; font-style: italic; }
 .detail-hero h2 { margin: 12px 0 5px; color: #fffdf7; font-family: Georgia, serif; font-size: 34px; font-weight: 400; letter-spacing: -.8px; }
 .detail-hero p { margin: 0; color: #c0beb5; font-size: 10px; }
 .detail-body { padding: 20px 28px 18px; }
+.game-details-toolbar { display: flex; align-items: center; justify-content: space-between; }
+.game-details-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 13px; }
+.game-details-error, .game-details-form-actions { grid-column: 1 / -1; }
+.game-details-form-actions { display: flex; justify-content: flex-end; }
+.game-details-save { min-height: 34px; font-size: 10px; }
+.game-details-save:disabled { cursor: wait; opacity: .7; }
 .detail-status-row, .detail-section { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
 .detail-status-row > div { display: grid; gap: 7px; }
 .detail-label { display: flex; align-items: center; gap: 5px; color: #93948b; font-size: 8px; font-weight: 800; letter-spacing: 1.15px; }
@@ -348,6 +354,8 @@ h1 span { color: #c1e577; font-style: italic; }
   .detail-body { padding: 16px 17px; }
   .detail-hero { min-height: 178px; padding: 22px 19px; }
   .detail-hero h2 { font-size: 29px; }
+  .game-details-form { grid-template-columns: 1fr; }
+  .game-details-error, .game-details-form-actions { grid-column: auto; }
   .detail-status-row, .detail-section { align-items: flex-start; }
   .detail-status-row { flex-direction: column; }
   .finish-toggle { align-self: stretch; justify-content: center; }
