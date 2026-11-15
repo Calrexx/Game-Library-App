@@ -11,5 +11,5 @@ A Demo Game Library project made with Express.js and vite
 5. Visit `http://localhost:5173/` either in your browser or CTRL + Left-Click the link in the terminal.
 
 ## 2.2 Online Usage
-1. You can access the app this link: https://gamelibraryapp.netlify.app
+1. You can access the app with this link: https://gamelibraryapp.netlify.app
 
